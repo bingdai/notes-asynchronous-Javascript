@@ -1,0 +1,12 @@
+Asynchronous JS
+
+What is Asynchronous Programming
+Example:
+Stove top?
+- if we only have one top, we can only cook one thing at a time
+- if we have two tops, we can make two things in parallel
+-Toasting bread
+-Making coffee
+
+
+Blocking code
