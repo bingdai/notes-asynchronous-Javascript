@@ -1,40 +1,59 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 
 const SampleAsyncFunction = () => {
-  //fetch returns a Promise object that is stored in the variable promise
-  //this promise variable (or the returned Promise object) represents
-  //an intermediate "pending" state
-  let promise = fetch(
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Cat_poster_1.jpg/320px-Cat_poster_1.jpg"
-  );
-  console.log("the initial promise is ", promise);
+  const [result, getResult] = useState("");
 
-  promise
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      } else {
-        console.log("the response object from fetch() is", response);
-        return response.blob();
-      }
-    })
-    .then((myBlob) => {
-      console.log("myBlob is ", myBlob);
-      let objectURL = URL.createObjectURL(myBlob);
-      let image = document.createElement("img");
-      image.src = objectURL;
-      document.body.appendChild(image);
-    })
-    .catch((e) => {
-      console.log(
-        "There has been a problem with your fetch operation: " + e.message
-      );
-    });
+  const runThisFunction = () => {
+    const fetchPromise = fetch(
+      "https://mdn.github.io/learning-area/javascript/apis/fetching-data/can-store/products.json"
+    );
+
+    //fetchPromise is in pending status right now
+    //console.log(fetchPromise);
+
+    //when the fetch operation succeeds, the promise will call
+    //the handler function(response)=>{} (aka the callback block).
+    //important: the promise passes the Response object (the server's response)
+    //to the handler function
+
+    // fetchPromise.then((response) => {
+    //   console.log(
+    //     `Received response: status: ${response.status}, statusText ${response.statusText}`
+    //   );
+
+    //   const jsonPromise = response.json();
+    //   jsonPromise.then((json) => {
+    //     console.log(json[0].name);
+    //     getResult(json[0].name);
+    //   });
+    // });
+
+    fetchPromise
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((json) => {
+        getResult(json[10000].name);
+      })
+      .catch((error) => {
+        console.error(`could not get products: ${error}`);
+      });
+  };
+
+  useEffect(() => {
+    //console.log("useEffect called");
+    runThisFunction();
+  }, []); //the [] ensures that there is only one request
+
+  // console.log("Started request...");
 
   return (
     <Fragment>
       <body>
-        <p>This is my page</p>
+        <p>This is my page {result}</p>
       </body>
     </Fragment>
   );
